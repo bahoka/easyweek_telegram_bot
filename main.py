@@ -1,13 +1,13 @@
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher, Router, types
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
-from aiogram.enums import ContentType
-from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram import Router
 from aiogram.client.session.aiohttp import AiohttpSession
+from aiogram.fsm.storage.memory import MemoryStorage
+from dotenv import load_dotenv
 import asyncio
-import db
 import os
+import db
 
+load_dotenv()
 TOKEN = os.getenv("BOT_TOKEN")
 
 bot = Bot(token=TOKEN, session=AiohttpSession())
@@ -22,13 +22,13 @@ async def start(message: Message):
     )
     await message.answer("Привет! Нажми кнопку ниже, чтобы отправить номер:", reply_markup=kb)
 
-@router.message(content_types=ContentType.CONTACT)
+@router.message(lambda msg: msg.contact is not None)
 async def save_contact(message: Message):
     phone = message.contact.phone_number
     if not phone.startswith('+'):
         phone = '+' + phone
     db.save_user(phone, message.chat.id)
-    await message.answer(f"Спасибо! Вы зарегистрированы по номеру {phone}")
+    await message.answer(f"Спасибо! Ты зарегистрирован по номеру {phone}.")
 
 async def main():
     db.init_db()
