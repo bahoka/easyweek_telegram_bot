@@ -15,15 +15,13 @@ dp = Dispatcher(storage=MemoryStorage())
 router = Router()
 dp.include_router(router)
 
-@router.message(lambda msg: msg.text == "/start")
-async def start(message: Message):
-    kb = ReplyKeyboardMarkup(
-        keyboard=[
-            [KeyboardButton(text="Отправить номер ☎️", request_contact=True)]
-        ],
-        resize_keyboard=True
-    )
-    await message.answer("Привет! Нажми кнопку ниже, чтобы отправить номер:", reply_markup=kb)
+@router.message(lambda msg: msg.contact is not None)
+async def save_contact(message: Message):
+    phone = message.contact.phone_number
+    if not phone.startswith('+'):
+        phone = '+' + phone
+    await db.save_user(phone, message.chat.id)  # await обязательно
+    await message.answer(f"Спасибо! Ты зарегистрирован по номеру {phone}.")
 
 @router.message(lambda msg: msg.contact is not None)
 async def save_contact(message: Message):
@@ -34,7 +32,7 @@ async def save_contact(message: Message):
     await message.answer(f"Спасибо! Ты зарегистрирован по номеру {phone}.")
 
 async def main():
-    db.init_db()
+    await db.init_db()
     await dp.start_polling(bot)
 
 if __name__ == "__main__":
