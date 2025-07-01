@@ -2,6 +2,7 @@
 import json
 import os
 import requests
+import asyncio
 from flask import Flask, request, jsonify
 from threading import Thread
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
@@ -59,6 +60,7 @@ async def contact_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("✅ Спасибо! Вы будете получать уведомления о записях.")
 
 def run_bot():
+    asyncio.set_event_loop(asyncio.new_event_loop())  # ✅ создаём loop в потоке
     app_tg = ApplicationBuilder().token(TELEGRAM_TOKEN).build()
     app_tg.add_handler(CommandHandler("start", start))
     app_tg.add_handler(MessageHandler(filters.CONTACT, contact_handler))
