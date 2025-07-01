@@ -17,8 +17,11 @@ dp.include_router(router)
 
 @router.message(lambda msg: msg.text == "/start")
 async def start(message: Message):
-    kb = ReplyKeyboardMarkup(resize_keyboard=True).add(
-        KeyboardButton(text="Отправить номер ☎️", request_contact=True)
+    kb = ReplyKeyboardMarkup(
+        keyboard=[
+            [KeyboardButton(text="Отправить номер ☎️", request_contact=True)]
+        ],
+        resize_keyboard=True
     )
     await message.answer("Привет! Нажми кнопку ниже, чтобы отправить номер:", reply_markup=kb)
 
