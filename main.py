@@ -2,6 +2,7 @@ from aiogram import Bot, Dispatcher, Router, types
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
 from aiogram.client.session.aiohttp import AiohttpSession
 from aiogram.fsm.storage.memory import MemoryStorage
+from aiogram.filters import Command
 from dotenv import load_dotenv
 import asyncio
 import os
@@ -15,7 +16,7 @@ dp = Dispatcher(storage=MemoryStorage())
 router = Router()
 dp.include_router(router)
 
-@router.message(commands=["start"])
+@router.message(Command("start"))
 async def cmd_start(message: Message):
     kb = ReplyKeyboardMarkup(
         keyboard=[
