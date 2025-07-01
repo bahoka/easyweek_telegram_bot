@@ -3,6 +3,7 @@ import json
 import os
 import requests
 import asyncio
+import subprocess
 from flask import Flask, request, jsonify
 from threading import Thread
 from telegram import Update, KeyboardButton, ReplyKeyboardMarkup
@@ -68,4 +69,5 @@ def run_bot():
 
 if __name__ == "__main__":
     Thread(target=run_bot).start()
+    subprocess.Popen(["python", "bot.py"])
     app.run(host="0.0.0.0", port=5000)
